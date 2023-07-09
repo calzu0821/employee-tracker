@@ -6,7 +6,7 @@ const mysql = require('mysql2');
 // Connection to SQL database
 const db = mysql.createConnection(
   {
-    host: 'localhost',
+    host: '127.0.0.1',
     port: 3306,
     user: 'root',
     password: 'root',
@@ -79,4 +79,46 @@ function promptUser() {
           break;
       }
     });
+}
+
+function viewAllDepartments() {
+  const query = 'SELECT * FROM department';
+  
+  db.query(query, (err, res) => {
+    if (err) throw err;
+
+    // Display the formatted table showing department names and ids
+    console.table(res);
+    
+    // Prompt the user again
+    promptUser();
+  });
+}
+
+function viewAllRoles() {
+  const query = 'SELECT * FROM role';
+  
+  db.query(query, (err, res) => {
+    if (err) throw err;
+
+    // Display the table showing all role job title, role id, the department that role belongs to, and the salary for that role
+    console.table(res);
+    
+    // Prompt the user again
+    promptUser();
+  });
+}
+
+function viewAllEmployees() {
+  const query = 'SELECT * FROM employee';
+  
+  db.query(query, (err, res) => {
+    if (err) throw err;
+
+    // Display the table showing all role job title, role id, the department that role belongs to, and the salary for that role
+    console.table(res);
+    
+    // Prompt the user again
+    promptUser();
+  });
 }
