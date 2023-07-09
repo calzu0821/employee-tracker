@@ -96,12 +96,16 @@ function viewAllDepartments() {
 }
 
 function viewAllRoles() {
-  const query = 'SELECT * FROM role';
+  const query = `
+  SELECT role.id, role.title, department.name AS department, role.salary
+  FROM role
+  INNER JOIN department ON role.department_id = department.id
+`;
   
   db.query(query, (err, res) => {
     if (err) throw err;
 
-    // Display the table showing all role job title, role id, the department that role belongs to, and the salary for that role
+    // Display the table showing all role job titles, role id's, the department that role belongs to, and the salary for that role
     console.table(res);
     
     // Prompt the user again
@@ -110,7 +114,20 @@ function viewAllRoles() {
 }
 
 function viewAllEmployees() {
-  const query = 'SELECT * FROM employee';
+  const query = `
+  SELECT 
+    employee.id,
+    employee.first_name,
+    employee.last_name,
+    role.title AS job_title,
+    department.name AS department,
+    role.salary,
+    CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+  FROM employee
+  INNER JOIN role ON employee.role_id = role.id
+  INNER JOIN department ON role.department_id = department.id
+  LEFT JOIN employee manager ON employee.manager_id = manager.id
+`;
   
   db.query(query, (err, res) => {
     if (err) throw err;
