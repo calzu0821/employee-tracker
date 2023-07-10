@@ -53,35 +53,47 @@ function promptUser() {
           'Add a role',
           'Add an employee',
           'Update an employee role',
-          'Quit',
+          'Delete a department',
+          'Delete a role',
+          'Delete an employee',
+          'Exit',
         ],
       },
     ])
     .then((answers) => {
       switch (answers.action) {
-        case 'View all departments':
+        case "View all departments":
           viewAllDepartments();
           break;
-        case 'View all roles':
+        case "View all roles":
           viewAllRoles();
           break;
-        case 'View all employees':
+        case "View all employees":
           viewAllEmployees();
           break;
-        case 'Add a department':
+        case "Add a department":
           addDepartment();
           break;
-        case 'Add a role':
+        case "Add a role":
           addRole();
           break;
-        case 'Add an employee':
+        case "Add an employee":
           addEmployee();
           break;
-        case 'Update an employee role':
+        case "Update an employee role":
           updateEmployeeRole();
           break;
-        case 'Exit':
-         console.log('Goodbye!');
+        case "Delete a department":
+          deleteDepartment();
+          break;
+        case "Delete a role":
+          deleteRole();
+          break;
+        case "Delete an employee":
+          deleteEmployee();
+          break;
+        case "Exit":
+          console.log("Goodbye!");
           db.end(); // Close the database connection
           break;
       }
@@ -284,5 +296,95 @@ async function updateEmployeeRole() {
 
   promptUser();
 }
+
+// Delete departments, roles, and employees
+
+async function deleteDepartment() {
+  try {
+    const departments = await queryAsync('SELECT * FROM department');
+    const choices = departments.map((department) => ({
+      name: department.name,
+      value: department.id,
+    }));
+
+    const answers = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'departmentId',
+        message: 'Select the department to delete:',
+        choices: choices,
+      },
+    ]);
+
+    const { departmentId } = answers
+    const deleteQuery = 'DELETE FROM department WHERE id = ?';
+    await queryAsync(deleteQuery, departmentId);
+
+    console.log('Department deleted successfully!');
+  } catch (err) {
+    console.error('Error deleting department:', err);
+  }
+
+  promptUser();
+}
+
+async function deleteRole() {
+  try {
+    const roles = await queryAsync('SELECT * FROM role');
+    const choices = roles.map((role) => ({
+      name: role.title,
+      value: role.id,
+    }));
+
+    const answers = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'roleId',
+        message: 'Select the role to delete:',
+        choices: choices,
+      },
+    ]);
+
+    const { roleId } = answers;
+    const deleteQuery = 'DELETE FROM role WHERE id = ?';
+    await queryAsync(deleteQuery, roleId);
+
+    console.log('Role deleted successfully!');
+  } catch (err) {
+    console.error('Error deleting role:', err);
+  }
+
+  promptUser();
+}
+
+async function deleteEmployee() {
+  try {
+    const employees = await queryAsync('SELECT * FROM employee');
+    const choices = employees.map((employee) => ({
+      name: `${employee.first_name} ${employee.last_name}`,
+      value: employee.id,
+    }));
+
+    const answers = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'employeeId',
+        message: 'Select the employee to delete:',
+        choices: choices,
+      },
+    ]);
+
+    const { employeeId } = answers;
+    const deleteQuery = 'DELETE FROM employee WHERE id = ?';
+    await queryAsync(deleteQuery, employeeId);
+
+    console.log('Employee deleted successfully!');
+  } catch (err) {
+    console.error('Error deleting employee:', err);
+  }
+
+  promptUser();
+}
+
 
 
